@@ -16,12 +16,19 @@ export default async function LivePage() {
 
   return (
     <div style={{ padding: 20 }}>
-      <h1>🔴 LIVE MATCHES</h1>
+      <h2>🔴 LIVE NOW</h2>
 
       {data.matches?.map((m: any) => (
-        <div key={m.id} style={{ background: "#111", padding: 10, marginTop: 10 }}>
+        <div key={m.id} style={{
+          background: "#15151c",
+          padding: 15,
+          marginTop: 10,
+          borderRadius: 10
+        }}>
           <b>{m.homeTeam.name} vs {m.awayTeam.name}</b>
-          <p>{m.status}</p>
+          <p style={{ color: "#00ff88" }}>
+            {m.score?.fullTime?.home ?? 0} - {m.score?.fullTime?.away ?? 0}
+          </p>
         </div>
       ))}
     </div>
