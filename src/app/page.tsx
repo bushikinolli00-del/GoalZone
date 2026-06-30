@@ -1,12 +1,29 @@
 export default function Home() {
-  return (
-    <main style={{ padding: 20, background: "#000", color: "#fff", minHeight: "100vh" }}>
-      <h1>⚽ Goal Zone</h1>
+  const matches = [
+    { home: "Man United", away: "Chelsea", score: "1 - 0", minute: "67'", status: "LIVE" },
+    { home: "Real Madrid", away: "Barcelona", score: "2 - 2", minute: "81'", status: "LIVE" },
+  ];
 
-      <div style={{ marginTop: 20 }}>
-        <div>🔴 Man United 1 - 0 Chelsea</div>
-        <div>🔴 Real Madrid 2 - 2 Barcelona</div>
-      </div>
-    </main>
+  return (
+    <div style={{ padding: 20 }}>
+      <h2>🔴 Live Matches</h2>
+
+      {matches.map((m, i) => (
+        <div key={i} style={{
+          background: "#15151c",
+          padding: 15,
+          marginTop: 10,
+          borderRadius: 10
+        }}>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <span>{m.minute}</span>
+            <span style={{ color: "red" }}>{m.status}</span>
+          </div>
+
+          <h3>{m.home} vs {m.away}</h3>
+          <b style={{ color: "#00ff88" }}>{m.score}</b>
+        </div>
+      ))}
+    </div>
   );
 }
