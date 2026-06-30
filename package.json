@@ -1,10 +1,12 @@
-
 {
   "name": "pitchside",
   "version": "1.0.0",
-  "description": "Pitchside Live Football Platform",
+  "description": "Pitchside - Live Football Streaming & News",
   "main": "index.html",
   "scripts": {
-    "start": "echo 'No build step needed, opening index.html'"
-  }
+    "build": "mkdir -p out && cp index.html out/"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
