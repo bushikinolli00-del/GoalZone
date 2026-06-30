@@ -16,11 +16,14 @@ export default async function StandingsPage() {
 
   return (
     <div style={{ padding: 20 }}>
-      <h1>🏆 Standings</h1>
+      <h2>🏆 Standings</h2>
 
       {data.standings?.[0]?.table?.map((t: any) => (
-        <div key={t.team.id} style={{ padding: 5 }}>
-          {t.position}. {t.team.name} - {t.points} pts
+        <div key={t.team.id} style={{
+          padding: 8,
+          borderBottom: "1px solid #222"
+        }}>
+          {t.position}. {t.team.name} — {t.points} pts
         </div>
       ))}
     </div>
