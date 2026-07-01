@@ -1,37 +1,19 @@
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #0b0b0f;
-  color: white;
-}
+const socket = io();
 
-header {
-  padding: 15px;
-  text-align: center;
-  font-size: 22px;
-  font-weight: bold;
-  background: linear-gradient(90deg, #00ff88, #0066ff);
-}
+socket.on("liveMatches", (data) => {
+  let html = "";
 
-.card {
-  background: #1c1c1c;
-  margin: 10px;
-  padding: 12px;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,255,136,0.15);
-}
+  data.forEach(m => {
+    const home = m.teams.home.name;
+    const away = m.teams.away.name;
 
-.league {
-  font-size: 12px;
-  color: #aaa;
-}
+    html += `
+      <div class="card">
+        <h3>${home} vs ${away}</h3>
+        <div class="score">⚽ ${m.goals.home ?? 0} - ${m.goals.away ?? 0}</div>
+      </div>
+    `;
+  });
 
-h3 {
-  margin: 5px 0;
-  color: #00ff88;
-}
-
-.score {
-  font-size: 18px;
-  font-weight: bold;
-}
+  document.getElementById("matches").innerHTML = html;
+});
