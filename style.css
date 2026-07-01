@@ -1,0 +1,59 @@
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0e1117;
+  color: white;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  background: #121826;
+}
+
+.logo { color: #00ff88; font-weight: 800; }
+
+.live { display: flex; align-items: center; gap: 6px; }
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: red;
+  border-radius: 50%;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse { 50% { transform: scale(1.5); } }
+
+.banner {
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #00ff88, #0066ff);
+  color: black;
+}
+
+.card {
+  background: #151b2a;
+  margin: 10px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #1f2a3a;
+}
+
+.match { display: flex; justify-content: space-between; }
+
+.score { color: #00ff88; font-size: 18px; }
+
+.popup {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #00ff88;
+  color: black;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.hidden { display: none; }
