@@ -1,30 +1,41 @@
 const express = require("express");
-const http = require("http");
-const cors = require("cors");
 const axios = require("axios");
-const socketIo = require("socket.io");
+const cors = require("cors");
+const http = require("http");
 const path = require("path");
 
 const app = express();
-app.use(cors());
-
 const server = http.createServer(app);
-const io = socketIo(server, {
-  cors: { origin: "*" }
-});
 
-// serve frontend
-app.use(express.static(path.join(__dirname, "public")));
+app.use(cors());
+app.use(express.json());
 
-// homepage
+// 🔥 SAFE static folder (nuk crash-on nëse mungon)
+const publicPath = path.join(__dirname, "public");
+
+// vetëm nëse ekziston, e përdor
+app.use(express.static(publicPath));
+
+// 🟢 HOME ROUTE (SAFE)
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  const indexFile = path.join(publicPath, "index.html");
+
+  res.sendFile(indexFile, (err) => {
+    if (err) {
+      // fallback nëse nuk ekziston frontend
+      res.send("⚽ GoalZone Backend is LIVE (NO FRONTEND YET)");
+    }
+  });
 });
 
-// API (backup)
+// ⚽ API MATCHES
 app.get("/api/matches", async (req, res) => {
   try {
     const API_KEY = process.env.API_KEY;
+
+    if (!API_KEY) {
+      return res.status(500).json({ error: "Missing API_KEY" });
+    }
 
     const response = await axios.get(
       "https://v3.football.api-sports.io/fixtures?live=all",
@@ -37,43 +48,13 @@ app.get("/api/matches", async (req, res) => {
 
     res.json(response.data.response || []);
   } catch (err) {
-    res.status(500).json({ error: "API error" });
+    console.log(err.message);
+    res.status(500).json({ error: "API failed" });
   }
-});
-
-// REALTIME LOOP
-async function getMatches() {
-  try {
-    const API_KEY = process.env.API_KEY;
-
-    const res = await axios.get(
-      "https://v3.football.api-sports.io/fixtures?live=all",
-      {
-        headers: {
-          "x-apisports-key": API_KEY
-        }
-      }
-    );
-
-    return res.data.response || [];
-  } catch {
-    return [];
-  }
-}
-
-// send updates every 5 sec
-setInterval(async () => {
-  const data = await getMatches();
-  io.emit("liveMatches", data);
-}, 5000);
-
-// socket connection
-io.on("connection", (socket) => {
-  console.log("Client connected ⚡");
 });
 
 const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, () => {
-  console.log("GoalZone Realtime running on", PORT);
+  console.log("⚽ GoalZone running on port", PORT);
 });
