@@ -1,28 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GoalZone</title>
+
+  <link rel="stylesheet" href="style.css">
 </head>
-<body style="background:#0b0b0f;color:white;font-family:Arial">
 
-<h1>⚽ GoalZone LIVE</h1>
+<body>
 
-<div id="matches">Loading...</div>
+<header>
+  <div class="logo">⚽ GoalZone</div>
+  <div class="live"><span class="dot"></span> LIVE</div>
+</header>
 
-<script>
-async function load() {
-  const res = await fetch("/api/matches");
-  const data = await res.json();
+<div class="banner">
+  <h1>Live Football Scores</h1>
+  <p>Real-time matches & goals</p>
+</div>
 
-  document.getElementById("matches").innerHTML =
-    data.map(m =>
-      `<p>${m.teams.home.name} vs ${m.teams.away.name} ⚽ ${m.goals.home} - ${m.goals.away}</p>`
-    ).join("");
-}
+<div id="matches"></div>
 
-load();
-setInterval(load, 5000);
-</script>
+<div id="popup" class="popup hidden"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="app.js"></script>
 
 </body>
 </html>
