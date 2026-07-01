@@ -1,0 +1,44 @@
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0b0b0f;
+  color: white;
+}
+
+header {
+  padding: 18px;
+  text-align: center;
+  background: linear-gradient(90deg, #00ff88, #0066ff);
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  padding: 12px;
+}
+
+.card {
+  background: #16161d;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,255,136,0.1);
+}
+
+.teams {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.score {
+  color: #00ff88;
+  font-size: 20px;
+  margin-top: 5px;
+}
+
+.live {
+  color: red;
+  font-size: 12px;
+}
