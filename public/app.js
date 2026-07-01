@@ -1,25 +1,38 @@
+const API_URL = "https://goalzone-2.onrender.com/api/matches";
+
 async function loadMatches() {
-  const res = await fetch("/api/matches");
-  const data = await res.json();
+  try {
+    const res = await fetch(API_URL);
+    const data = await res.json();
 
-  let html = "";
+    let html = "";
 
-  data.forEach(m => {
-    const home = m.teams.home.name;
-    const away = m.teams.away.name;
-    const score = `${m.goals.home ?? 0} - ${m.goals.away ?? 0}`;
+    data.forEach(m => {
+      const home = m.teams?.home?.name || "Home";
+      const away = m.teams?.away?.name || "Away";
 
-    html += `
-      <div class="card">
-        <div class="live">🔴 LIVE</div>
-        <div class="teams">${home} vs ${away}</div>
-        <div class="score">⚽ ${score}</div>
-      </div>
-    `;
-  });
+      const hg = m.goals?.home ?? 0;
+      const ag = m.goals?.away ?? 0;
 
-  document.getElementById("matches").innerHTML = html;
+      const league = m.league?.name || "";
+
+      html += `
+        <div class="card">
+          <div class="league">${league}</div>
+          <h3>${home} vs ${away}</h3>
+          <div class="score">⚽ ${hg} - ${ag}</div>
+        </div>
+      `;
+    });
+
+    document.getElementById("matches").innerHTML = html;
+
+  } catch (err) {
+    document.getElementById("matches").innerHTML =
+      "<p>⚠️ Error loading matches</p>";
+    console.log(err);
+  }
 }
 
 loadMatches();
-setInterval(loadMatches, 5000);
+setInterval(loadMatches, 7000);
