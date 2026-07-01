@@ -18,49 +18,69 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// MATCHES
-async function fetchMatches() {
-  const API_KEY = process.env.API_KEY;
-
-  const res = await axios.get(
-    "https://v3.football.api-sports.io/fixtures?live=all",
-    { headers: { "x-apisports-key": API_KEY } }
-  );
-
-  return res.data.response || [];
-}
-
-// MATCH LIST API
-app.get("/api/matches", async (req, res) => {
-  const data = await fetchMatches();
-  res.json(data);
-});
-
-// SINGLE MATCH API
+// MATCH DETAILS
 app.get("/api/match/:id", async (req, res) => {
   try {
     const API_KEY = process.env.API_KEY;
 
-    const resApi = await axios.get(
+    const r = await axios.get(
       `https://v3.football.api-sports.io/fixtures?id=${req.params.id}`,
-      { headers: { "x-apisports-key": API_KEY } }
+      {
+        headers: { "x-apisports-key": API_KEY }
+      }
     );
 
-    res.json(resApi.data.response[0]);
+    res.json(r.data.response?.[0] || {});
   } catch {
-    res.status(500).json({ error: "match error" });
+    res.json({});
   }
 });
 
-// LIVE SOCKET
-let lastData = [];
+// LINEUPS FIX (IMPORTANT)
+app.get("/api/lineups/:id", async (req, res) => {
+  try {
+    const API_KEY = process.env.API_KEY;
+
+    const r = await axios.get(
+      `https://v3.football.api-sports.io/fixtures/lineups?fixture=${req.params.id}`,
+      {
+        headers: { "x-apisports-key": API_KEY }
+      }
+    );
+
+    res.json(r.data.response || []);
+  } catch {
+    res.json([]);
+  }
+});
+
+// LIVE MATCHES
+async function getLive() {
+  try {
+    const API_KEY = process.env.API_KEY;
+
+    const r = await axios.get(
+      "https://v3.football.api-sports.io/fixtures?live=all",
+      {
+        headers: { "x-apisports-key": API_KEY }
+      }
+    );
+
+    return r.data.response || [];
+  } catch {
+    return [];
+  }
+}
+
+// SOCKET LIVE LOOP
+let oldData = [];
 
 setInterval(async () => {
-  const data = await fetchMatches();
+  const data = await getLive();
 
-  // goal detection
+  // goal detect
   data.forEach(m => {
-    const old = lastData.find(x => x.fixture.id === m.fixture.id);
+    const old = oldData.find(x => x.fixture.id === m.fixture.id);
 
     if (old) {
       if (old.goals.home !== m.goals.home || old.goals.away !== m.goals.away) {
@@ -72,8 +92,7 @@ setInterval(async () => {
     }
   });
 
-  lastData = data;
-
+  oldData = data;
   io.emit("liveMatches", data);
 }, 5000);
 
