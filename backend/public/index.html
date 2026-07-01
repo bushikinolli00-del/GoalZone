@@ -1,31 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>GoalZone</title>
 
   <link rel="stylesheet" href="style.css">
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#00ff88">
 </head>
 
 <body>
 
+<!-- HEADER -->
 <header>
   <div class="logo">⚽ GoalZone</div>
-  <div class="live"><span class="dot"></span> LIVE</div>
+  <div class="live">
+    <span class="dot"></span> LIVE
+  </div>
 </header>
 
+<!-- BANNER -->
 <div class="banner">
   <h1>Live Football Scores</h1>
-  <p>Real-time matches & goals</p>
+  <p>Real-time matches, goals & stats</p>
 </div>
 
+<!-- MATCH LIST -->
 <div id="matches"></div>
 
+<!-- GOAL POPUP -->
 <div id="popup" class="popup hidden"></div>
 
+<!-- SOCKET -->
 <script src="/socket.io/socket.io.js"></script>
 <script src="app.js"></script>
+
+<!-- SERVICE WORKER -->
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js")
+    .then(() => console.log("SW ready"));
+}
+</script>
 
 </body>
 </html>
