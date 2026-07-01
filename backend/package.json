@@ -1,5 +1,5 @@
 {
-  "name": "goalzone-pro",
+  "name": "goalzone-realtime",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
