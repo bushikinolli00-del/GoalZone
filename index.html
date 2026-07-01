@@ -1,90 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GoalZone Live</title>
-
-  <style>
-    body {
-      font-family: Arial;
-      background: #0f0f0f;
-      color: white;
-      margin: 0;
-      padding: 15px;
-    }
-
-    h1 {
-      text-align: center;
-      color: #00ff88;
-    }
-
-    .match {
-      background: #1c1c1c;
-      padding: 15px;
-      margin: 10px 0;
-      border-radius: 10px;
-    }
-
-    .score {
-      font-size: 20px;
-      color: #00ff88;
-    }
-
-    iframe {
-      width: 100%;
-      height: 220px;
-      border-radius: 10px;
-      margin-top: 10px;
-    }
-  </style>
+  <title>GoalZone Pro Max</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<h1>⚽ GoalZone Live</h1>
+<header>⚽ GoalZone PRO MAX LIVE</header>
 
-<div id="matches">Loading live matches...</div>
+<div id="matches">Loading...</div>
 
-<script>
-async function loadMatches() {
-  // demo data (mundesh me e ndrru me API më vonë)
-  const data = [
-    {
-      home: "Real Madrid",
-      away: "Barcelona",
-      score: "2 - 1",
-      video: "dQw4w9WgXcQ"
-    },
-    {
-      home: "Man United",
-      away: "Liverpool",
-      score: "1 - 1",
-      video: "dQw4w9WgXcQ"
-    }
-  ];
-
-  let html = "";
-
-  data.forEach(m => {
-    html += `
-      <div class="match">
-        <div><b>${m.home}</b> vs <b>${m.away}</b></div>
-        <div class="score">⚽ ${m.score}</div>
-
-        <iframe 
-          src="https://www.youtube.com/embed/${m.video}"
-          allowfullscreen>
-        </iframe>
-      </div>
-    `;
-  });
-
-  document.getElementById("matches").innerHTML = html;
-}
-
-loadMatches();
-</script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="app.js"></script>
 
 </body>
 </html>
