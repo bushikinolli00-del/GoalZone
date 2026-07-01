@@ -1,46 +1,41 @@
-async function loadMatches() {
-  try {
-    const res = await fetch("/api/matches");
-    const data = await res.json();
+const socket = io();
 
-    let html = "";
+socket.on("liveMatches", (data) => {
+  let html = "";
 
-    data.forEach(m => {
-      const home = m.teams?.home?.name || "Home";
-      const away = m.teams?.away?.name || "Away";
-      const hg = m.goals?.home ?? 0;
-      const ag = m.goals?.away ?? 0;
-      const league = m.league?.name || "";
+  data.forEach(m => {
+    html += `
+      <div class="card">
+        <div class="league">${m.league.name}</div>
 
-      html += `
-        <div class="card">
-          <div class="league">${league}</div>
-
-          <div class="match">
-            <div class="team">${home}</div>
-
-            <div class="score">
-              <span>${hg}</span>
-              <span class="vs">-</span>
-              <span>${ag}</span>
-            </div>
-
-            <div class="team">${away}</div>
-          </div>
+        <div class="match">
+          <div class="team">${m.teams.home.name}</div>
+          <div class="score">${m.goals.home} - ${m.goals.away}</div>
+          <div class="team">${m.teams.away.name}</div>
         </div>
-      `;
-    });
 
-    document.getElementById("matches").innerHTML = html;
+        <div class="status">${m.fixture.status.long} ${m.fixture.status.elapsed || 0}'</div>
+      </div>
+    `;
+  });
 
-  } catch (err) {
-    document.getElementById("matches").innerHTML =
-      "⚠️ Error loading matches";
-  }
+  document.getElementById("matches").innerHTML = html;
+});
+
+// GOAL ALERT
+socket.on("goalEvent", (data) => {
+  const popup = document.getElementById("popup");
+
+  popup.classList.remove("hidden");
+  popup.innerHTML = `⚽ GOAL!<br>${data.match}<br>${data.score}`;
+
+  setTimeout(() => popup.classList.add("hidden"), 3000);
+
+  const audio = new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3");
+  audio.play();
+});
+
+// PWA
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js");
 }
-
-// first load
-loadMatches();
-
-// refresh every 5 sec (LIVE FEEL)
-setInterval(loadMatches, 5000);
