@@ -1,7 +1,7 @@
 const express = require("express");
 const http = require("http");
-const cors = require("cors");
 const axios = require("axios");
+const cors = require("cors");
 const path = require("path");
 const socketIo = require("socket.io");
 
@@ -9,9 +9,7 @@ const app = express();
 app.use(cors());
 
 const server = http.createServer(app);
-const io = socketIo(server, {
-  cors: { origin: "*" }
-});
+const io = socketIo(server, { cors: { origin: "*" } });
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -20,32 +18,48 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// API
+// MATCHES
 async function fetchMatches() {
+  const API_KEY = process.env.API_KEY;
+
+  const res = await axios.get(
+    "https://v3.football.api-sports.io/fixtures?live=all",
+    { headers: { "x-apisports-key": API_KEY } }
+  );
+
+  return res.data.response || [];
+}
+
+// MATCH LIST API
+app.get("/api/matches", async (req, res) => {
+  const data = await fetchMatches();
+  res.json(data);
+});
+
+// SINGLE MATCH API
+app.get("/api/match/:id", async (req, res) => {
   try {
     const API_KEY = process.env.API_KEY;
 
-    const res = await axios.get(
-      "https://v3.football.api-sports.io/fixtures?live=all",
-      {
-        headers: { "x-apisports-key": API_KEY }
-      }
+    const resApi = await axios.get(
+      `https://v3.football.api-sports.io/fixtures?id=${req.params.id}`,
+      { headers: { "x-apisports-key": API_KEY } }
     );
 
-    return res.data.response || [];
+    res.json(resApi.data.response[0]);
   } catch {
-    return [];
+    res.status(500).json({ error: "match error" });
   }
-}
+});
 
-// LIVE + GOAL DETECTION
+// LIVE SOCKET
 let lastData = [];
 
 setInterval(async () => {
   const data = await fetchMatches();
 
   // goal detection
-  data.forEach((m) => {
+  data.forEach(m => {
     const old = lastData.find(x => x.fixture.id === m.fixture.id);
 
     if (old) {
@@ -64,9 +78,9 @@ setInterval(async () => {
 }, 5000);
 
 // SOCKET
-io.on("connection", (socket) => {
-  console.log("Client connected");
+io.on("connection", () => {
+  console.log("client connected");
 });
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log("GoalZone running on", PORT));
+server.listen(PORT, () => console.log("GoalZone LIVE"));
