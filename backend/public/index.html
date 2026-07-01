@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GoalZone</title>
+</head>
+<body style="background:#0b0b0f;color:white;font-family:Arial">
+
+<h1>⚽ GoalZone LIVE</h1>
+
+<div id="matches">Loading...</div>
+
+<script>
+async function load() {
+  const res = await fetch("/api/matches");
+  const data = await res.json();
+
+  document.getElementById("matches").innerHTML =
+    data.map(m =>
+      `<p>${m.teams.home.name} vs ${m.teams.away.name} ⚽ ${m.goals.home} - ${m.goals.away}</p>`
+    ).join("");
+}
+
+load();
+setInterval(load, 5000);
+</script>
+
+</body>
+</html>
