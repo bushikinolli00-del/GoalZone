@@ -18,10 +18,9 @@ app.get("/api/matches", async (req, res) => {
       }
     );
 
-    res.json(result.data.response);
-
+    res.json(result.data.response || []);
   } catch (err) {
-    console.log("API ERROR:", err.message);
+    console.log("ERROR:", err.message);
     res.json([]);
   }
 });
@@ -29,5 +28,5 @@ app.get("/api/matches", async (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log("Server running on port " + PORT);
+  console.log("Server running on port", PORT);
 });
