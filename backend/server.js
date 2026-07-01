@@ -1,37 +1,31 @@
 const express = require("express");
-const axios = require("axios");
+const http = require("http");
 const cors = require("cors");
-const path = require("path");
+const axios = require("axios");
+const socketIo = require("socket.io");
 
 const app = express();
-
-// middleware
 app.use(cors());
 app.use(express.json());
 
-// ⚠️ SAFE: serve frontend only if folder exists
-const publicPath = path.join(__dirname, "public");
+// serve frontend
+app.use(express.static("public"));
 
-// vetëm nëse ekziston public folder
-app.use(express.static(publicPath));
-
-// 🟢 HOME ROUTE
 app.get("/", (req, res) => {
-  res.send("⚽ GoalZone Backend is LIVE");
+  res.send("GoalZone LIVE ⚽");
 });
 
-// ⚽ API ROUTE
-app.get("/api/matches", async (req, res) => {
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: { origin: "*" }
+});
+
+// fetch live matches
+async function getMatches() {
   try {
     const API_KEY = process.env.API_KEY;
 
-    if (!API_KEY) {
-      return res.status(500).json({
-        error: "API_KEY missing in environment variables"
-      });
-    }
-
-    const response = await axios.get(
+    const res = await axios.get(
       "https://v3.football.api-sports.io/fixtures?live=all",
       {
         headers: {
@@ -40,17 +34,23 @@ app.get("/api/matches", async (req, res) => {
       }
     );
 
-    res.json(response.data.response || []);
-
+    return res.data.response || [];
   } catch (err) {
     console.log("API ERROR:", err.message);
-    res.status(500).json({ error: "Failed to fetch matches" });
+    return [];
   }
+}
+
+// REAL TIME PUSH
+setInterval(async () => {
+  const data = await getMatches();
+  io.emit("matches", data);
+}, 5000);
+
+// SOCKET
+io.on("connection", (socket) => {
+  console.log("Client connected");
 });
 
-// ⚙️ PORT (Render fix)
 const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log("⚽ Server running on port", PORT);
-});
+server.listen(PORT, () => console.log("Server running", PORT));
