@@ -1,22 +1,32 @@
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
+const path = require("path");
 
 const app = express();
 
+// middleware
 app.use(cors());
+app.use(express.json());
 
-// TEST ROUTE (me pa a punon serveri)
+// 🔥 serve frontend files
+app.use(express.static(path.join(__dirname, "public")));
+
+// 🟢 home route (website)
 app.get("/", (req, res) => {
-  res.send("⚽ GoalZone Backend is LIVE");
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// LIVE MATCHES API
+// ⚽ API route (live matches)
 app.get("/api/matches", async (req, res) => {
   try {
     const API_KEY = process.env.API_KEY;
 
-    const result = await axios.get(
+    if (!API_KEY) {
+      return res.status(500).json({ error: "API_KEY missing in ENV" });
+    }
+
+    const response = await axios.get(
       "https://v3.football.api-sports.io/fixtures?live=all",
       {
         headers: {
@@ -25,16 +35,16 @@ app.get("/api/matches", async (req, res) => {
       }
     );
 
-    res.json(result.data.response || []);
+    res.json(response.data.response || []);
   } catch (err) {
-    console.log("ERROR:", err.message);
-    res.status(500).json({ error: "API failed" });
+    console.log("API ERROR:", err.message);
+    res.status(500).json({ error: "Failed to fetch matches" });
   }
 });
 
-// PORT (RENDER FIX)
+// ⚙️ PORT (Render required)
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log("⚽ Server running on port", PORT);
+  console.log("⚽ GoalZone running on port", PORT);
 });
