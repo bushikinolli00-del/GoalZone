@@ -4,24 +4,30 @@ const cors = require("cors");
 
 const app = express();
 app.use(cors());
-app.use(express.static("public"));
 
-const API_KEY = "YOUR_API_KEY";
+const API_KEY = process.env.API_KEY;
 
-// LIVE MATCHES API
 app.get("/api/matches", async (req, res) => {
   try {
     const result = await axios.get(
       "https://v3.football.api-sports.io/fixtures?live=all",
       {
-        headers: { "x-apisports-key": API_KEY }
+        headers: {
+          "x-apisports-key": API_KEY
+        }
       }
     );
 
     res.json(result.data.response);
+
   } catch (err) {
+    console.log("API ERROR:", err.message);
     res.json([]);
   }
 });
 
-app.listen(3000, () => console.log("GoalZone running on 3000"));
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log("Server running on port " + PORT);
+});
