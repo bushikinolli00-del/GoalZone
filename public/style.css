@@ -5,54 +5,35 @@ body {
   color: white;
 }
 
-/* HEADER */
+/* HEADER MENU */
 header {
   padding: 15px;
-  text-align: center;
-  font-size: 22px;
-  font-weight: bold;
   background: linear-gradient(90deg, #00ff88, #0066ff);
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-/* CONTAINER */
+.menu span {
+  margin-left: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* MATCHES */
 .container {
   padding: 10px;
 }
 
-/* MATCH CARD */
 .card {
   background: #1c1c1c;
   margin: 10px 0;
   padding: 12px;
-  border-radius: 12px;
-  transition: 0.2s;
+  border-radius: 10px;
 }
 
-.card:hover {
-  background: #2a2a2a;
-  transform: scale(1.01);
-}
-
-/* TEAMS */
-.teams {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-/* SCORE */
 .score {
-  margin-top: 5px;
   color: #00ff88;
-  font-size: 18px;
-}
-
-/* MOBILE */
-@media (max-width: 768px) {
-  header {
-    font-size: 18px;
-  }
-
-  .card {
-    font-size: 14px;
-  }
 }
